@@ -1,18 +1,8 @@
 <template>
   <v-app id="inspire">
-    <v-app-bar app color="blue" dense dark>
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+    <Navbar v-on:drawerSelectionChanged="drawerSelectionChangedHandler" />
 
-      <v-toolbar-title>Developer Sketch Notes</v-toolbar-title>
-      <v-btn icon>
-        <v-icon>mdi-bird</v-icon>
-      </v-btn>
-      <v-subheader>Sketch your learnings</v-subheader>
-    </v-app-bar>
-
-    <v-navigation-drawer v-model="drawer" fixed temporary>
-      <!--  -->
-    </v-navigation-drawer>
+    <Menu :drawer="drawer" />
 
     <v-main class="grey lighten-2">
       <Home />
@@ -22,13 +12,22 @@
 
 <script>
 import Home from "./components/Home.vue";
+import Navbar from "./components/Navbar.vue";
+import Menu from "./components/Menu.vue";
 export default {
   name: "App",
 
   components: {
     Home,
+    Navbar,
+    Menu,
   },
 
   data: () => ({ drawer: null }),
+  methods: {
+    drawerSelectionChangedHandler() {
+      this.drawer = !this.drawer;
+    },
+  },
 };
 </script>
