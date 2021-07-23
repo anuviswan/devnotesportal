@@ -15,8 +15,13 @@
 </template>
 
 <script>
+import { getSketches } from "../apis/sketches";
 export default {
   name: "Home",
+  async created() {
+    var results = await getSketches();
+    console.log(results);
+  },
 };
 </script>
 
