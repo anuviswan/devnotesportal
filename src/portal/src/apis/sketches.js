@@ -1,5 +1,6 @@
-const getSketches=()=>{
-    return [
+const getSketches=(category)=>{
+
+    const data = [
         {
             title:'Singleton',
             description:'Singleton Pattern',
@@ -15,7 +16,20 @@ const getSketches=()=>{
             description:'Async Await',
             tags:['DotNet']
         }
+    ];
+
+
+    return data.filter((item)=>item.tags.includes(category));
+}
+
+
+
+const getTags = () => {
+    return [
+        'Design Pattern',
+        'Gang Of Four',
+        'Dot Net'
     ]
 }
 
-export {getSketches}
+export {getSketches, getTags}

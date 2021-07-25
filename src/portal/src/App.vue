@@ -5,7 +5,7 @@
     <Menu :drawer="drawer" />
 
     <v-main class="grey lighten-2">
-      <Home />
+      <Home v-on:sketchesLoaded="onSketchesLoaded" />
     </v-main>
   </v-app>
 </template>
@@ -28,6 +28,9 @@ export default {
     drawerSelectionChangedHandler() {
       this.drawer = !this.drawer;
     },
+    onSketchesLoaded(){
+      
+    }
   },
 };
 </script>

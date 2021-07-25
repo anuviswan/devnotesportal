@@ -1,23 +1,33 @@
 <template>
-  <v-navigation-drawer v-model="drawer" fixed temporary>
-    <!--  -->
+  <v-navigation-drawer v-model="drawer" fixed temporary dense nav>
+    <v-list dense nav>
+      <v-list-item v-for="item in items" :key="item" link>
+        <v-list-item-content>
+          <v-list-item-title>
+            {{ item }}
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
   </v-navigation-drawer>
 </template>
 
 <script>
+import { getTags } from "../apis/sketches";
 export default {
   name: "Menu",
   data() {
     return {
-      items: [
-        { title: "Home", icon: "mdi-view-dashboard" },
-        { title: "About", icon: "mdi-forum" },
-        { title: "About1", icon: "mdi-forum" },
-      ],
+      items: [],
     };
   },
   props: {
     drawer: null,
+  },
+  async created() {
+    this.items = await getTags();
+    this.$emit("itemSelectionChanged");
+    console.log(this.items);
   },
 };
 </script>

@@ -18,9 +18,15 @@
 import { getSketches } from "../apis/sketches";
 export default {
   name: "Home",
+  data: () => {
+    return {
+      sketchesCollection: [],
+    };
+  },
   async created() {
-    var results = await getSketches();
-    console.log(results);
+    this.sketchesCollection = await getSketches("DotNet");
+    this.$emit("sketchesLoaded");
+    console.log(this.sketchesCollection);
   },
 };
 </script>
