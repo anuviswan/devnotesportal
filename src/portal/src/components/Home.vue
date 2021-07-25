@@ -23,10 +23,17 @@ export default {
       sketchesCollection: [],
     };
   },
-  async created() {
-    this.sketchesCollection = await getSketches("DotNet");
-    this.$emit("sketchesLoaded");
-    console.log(this.sketchesCollection);
+  props: ["selectedTag"],
+  methods: {
+    async loadImages(tag) {
+      this.sketchesCollection = await getSketches(tag);
+      console.log(this.sketchesCollection);
+    },
+  },
+  watch: {
+    selectedTag: function(tag) {
+      this.loadImages(tag);
+    },
   },
 };
 </script>

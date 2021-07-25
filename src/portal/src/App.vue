@@ -2,10 +2,13 @@
   <v-app id="inspire">
     <Navbar v-on:drawerSelectionChanged="drawerSelectionChangedHandler" />
 
-    <Menu :drawer="drawer" />
+    <Menu :drawer="drawer" v-on:itemSelectionChanged="onItemSelectionChanged" />
 
     <v-main class="grey lighten-2">
-      <Home v-on:sketchesLoaded="onSketchesLoaded" />
+      <Home
+        v-on:sketchesLoaded="onSketchesLoaded"
+        :selectedTag="currentSelectedTag"
+      />
     </v-main>
   </v-app>
 </template>
@@ -23,14 +26,20 @@ export default {
     Menu,
   },
 
-  data: () => ({ drawer: null }),
+  data() {
+    return {
+      drawer: null,
+      currentSelectedTag: "",
+    };
+  },
   methods: {
     drawerSelectionChangedHandler() {
       this.drawer = !this.drawer;
     },
-    onSketchesLoaded(){
-      
-    }
+    onSketchesLoaded() {},
+    onItemSelectionChanged(item) {
+      this.currentSelectedTag = item;
+    },
   },
 };
 </script>

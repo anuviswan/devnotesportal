@@ -3,7 +3,7 @@
     <v-list dense nav>
       <v-list-item v-for="item in items" :key="item" link>
         <v-list-item-content>
-          <v-list-item-title>
+          <v-list-item-title @click="onSelection(item)">
             {{ item }}
           </v-list-item-title>
         </v-list-item-content>
@@ -19,6 +19,7 @@ export default {
   data() {
     return {
       items: [],
+      currentSelection: "",
     };
   },
   props: {
@@ -26,8 +27,18 @@ export default {
   },
   async created() {
     this.items = await getTags();
-    this.$emit("itemSelectionChanged");
-    console.log(this.items);
+    this.$emit("itemSelectionChanged", this.items[0]);
+  },
+  methods: {
+    onSelection(item) {
+      if (this.currentSelection !== item) {
+        this.currentSelection = item;
+        this.$emit("itemSelectionChanged", item);
+        return;
+      }
+
+      console.log("reselection");
+    },
   },
 };
 </script>

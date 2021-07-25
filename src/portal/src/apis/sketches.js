@@ -18,8 +18,8 @@ const getSketches=(category)=>{
         }
     ];
 
-
-    return data.filter((item)=>item.tags.includes(category));
+    const result = data.filter((item)=>item.tags.includes(category));
+    return result;
 }
 
 
