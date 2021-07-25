@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer v-model="drawer" fixed temporary dense nav>
+  <v-navigation-drawer app fixed permanent dense nav clipped>
     <v-list dense nav>
       <v-list-item v-for="item in items" :key="item" link>
         <v-list-item-content>
@@ -21,9 +21,6 @@ export default {
       items: [],
       currentSelection: "",
     };
-  },
-  props: {
-    drawer: null,
   },
   async created() {
     this.items = await getTags();

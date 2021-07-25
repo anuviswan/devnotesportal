@@ -28,7 +28,7 @@ const getTags = () => {
     return [
         'Design Pattern',
         'Gang Of Four',
-        'Dot Net'
+        'DotNet'
     ]
 }
 
