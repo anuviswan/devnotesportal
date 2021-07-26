@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app color="blue" dense dark>
+  <v-app-bar app color="blue" dense dark clipped-left>
     <v-app-bar-nav-icon @click="notifyShowDrawer"></v-app-bar-nav-icon>
 
     <v-toolbar-title>Developer Sketch Notes</v-toolbar-title>

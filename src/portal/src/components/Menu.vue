@@ -1,23 +1,51 @@
 <template>
-  <v-navigation-drawer v-model="drawer" fixed temporary>
-    <!--  -->
+  <v-navigation-drawer app fixed permanent dense nav clipped>
+    <v-list dense nav>
+      <v-list-item v-for="item in items" :key="item" link>
+        <v-list-item-content>
+          <v-list-item-title @click="onSelection(item)">
+            {{ item }}
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+    <v-divider></v-divider>
+    <v-list dense nav>
+      <v-list-item link>
+        <v-list-item-content>
+          <v-list-item-title>
+            About
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
   </v-navigation-drawer>
 </template>
 
 <script>
+import { getTags } from "../apis/sketches";
 export default {
   name: "Menu",
   data() {
     return {
-      items: [
-        { title: "Home", icon: "mdi-view-dashboard" },
-        { title: "About", icon: "mdi-forum" },
-        { title: "About1", icon: "mdi-forum" },
-      ],
+      items: [],
+      currentSelection: "",
     };
   },
-  props: {
-    drawer: null,
+  async created() {
+    this.items = await getTags();
+    this.$emit("itemSelectionChanged", this.items[0]);
+  },
+  methods: {
+    onSelection(item) {
+      if (this.currentSelection !== item) {
+        this.currentSelection = item;
+        this.$emit("itemSelectionChanged", item);
+        return;
+      }
+
+      console.log("reselection");
+    },
   },
 };
 </script>
