@@ -9,6 +9,16 @@
         </v-list-item-content>
       </v-list-item>
     </v-list>
+    <v-divider></v-divider>
+    <v-list dense nav>
+      <v-list-item link>
+        <v-list-item-content>
+          <v-list-item-title>
+            About
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
   </v-navigation-drawer>
 </template>
 
