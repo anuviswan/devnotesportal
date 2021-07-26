@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace api
 {
-    public static class sketchapi
+    public static class SketchApi
     {
         [FunctionName("getTags")]
         public static async Task<IActionResult> GetTags(
