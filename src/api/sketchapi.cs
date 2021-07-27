@@ -24,10 +24,11 @@ namespace api
             ILogger log)
         {
             TableContinuationToken continuationToken = null;
-            var fluentQuery = new TableQuery<ImageEntry>();
+            string queryString = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "Tag");
+            var fluentQuery = new TableQuery<ImageEntry>().Where(queryString);
             var result = await table.ExecuteQuerySegmentedAsync(fluentQuery, continuationToken);
 
-            return new OkObjectResult(result);
+            return new OkObjectResult(result.Select(x=>x.Title));
 
         }
     }
@@ -39,10 +40,6 @@ namespace api
         public string Description { get; set; }
         public string Url { get; set; }
         public string Tags { get;set; }
-        public string PartitionKey { get; set; }
-        public string RowKey { get; set; }
-        public DateTimeOffset Timestamp { get; set; }
-        public string ETag { get; set; }
 
     }
 }
