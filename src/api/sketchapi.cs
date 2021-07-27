@@ -7,6 +7,11 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+//using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.Azure.Cosmos.Table;
+using System.Collections.Generic;
+using System.Linq;
+using System.Diagnostics;
 
 namespace api
 {
@@ -15,21 +20,29 @@ namespace api
         [FunctionName("getTags")]
         public static async Task<IActionResult> GetTags(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+            [Table("devsketches")] CloudTable table,
             ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            TableContinuationToken continuationToken = null;
+            var fluentQuery = new TableQuery<ImageEntry>();
+            var result = await table.ExecuteQuerySegmentedAsync(fluentQuery, continuationToken);
 
-            string name = req.Query["name"];
+            return new OkObjectResult(result);
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
-
-            string responseMessage = string.IsNullOrEmpty(name)
-                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-                : $"Hello, {name}. This HTTP triggered function executed successfully.";
-
-            return new OkObjectResult(responseMessage);
         }
+    }
+
+
+    public class ImageEntry:TableEntity
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string Url { get; set; }
+        public string Tags { get;set; }
+        public string PartitionKey { get; set; }
+        public string RowKey { get; set; }
+        public DateTimeOffset Timestamp { get; set; }
+        public string ETag { get; set; }
+
     }
 }
