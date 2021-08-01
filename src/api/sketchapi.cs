@@ -5,7 +5,10 @@ using Microsoft.Azure.Cosmos.Table;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using System;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace api
@@ -19,11 +22,38 @@ namespace api
             ILogger log)
         {
             TableContinuationToken continuationToken = null;
-            string queryString = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, TagEntry.PartitionTitle);
+            string queryString = TableQuery.GenerateFilterCondition(nameof(TableEntity.PartitionKey), QueryComparisons.Equal, TagEntry.PartitionTitle);
             var fluentQuery = new TableQuery<TagEntry>().Where(queryString);
             var result = await table.ExecuteQuerySegmentedAsync(fluentQuery, continuationToken);
 
-            return new OkObjectResult(result.Select(x=>x.Title));
+            return new OkObjectResult(result.Select(x=>new
+            {
+                Title = x.Title,
+                Id = x.RowKey
+            }));
+
+        }
+
+        [FunctionName("getEntries")]
+        public static async Task<IActionResult> GetEntriesFor(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+            [Table("devsketches")] CloudTable table,
+            ILogger log)
+        {
+            var id = req.Query["id"];
+
+            TableContinuationToken continuationToken = null;
+            var partionKeyQuery = TableQuery.GenerateFilterCondition(nameof(ImageEntry.PartitionKey), QueryComparisons.Equal, id);
+                
+            var fluentQuery = new TableQuery<ImageEntry>().Where(partionKeyQuery);
+            var result = await table.ExecuteQuerySegmentedAsync(fluentQuery, continuationToken);
+
+            return new OkObjectResult(result.Select(x => new
+            {
+                Title = x.Title,
+                Description= x.Description,
+                Url = x.Url
+            }));
 
         }
     }
@@ -35,7 +65,7 @@ namespace api
         public string Title { get; set; }
         public string Description { get; set; }
         public string Url { get; set; }
-        public string Tags { get;set; }
+        public int Tag { get;set; }
 
     }
 
