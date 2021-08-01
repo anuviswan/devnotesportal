@@ -1,12 +1,15 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+//using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.Azure.Cosmos.Table;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace api
 {
@@ -15,21 +18,60 @@ namespace api
         [FunctionName("getTags")]
         public static async Task<IActionResult> GetTags(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+            [Table("devsketches")] CloudTable table,
             ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            TableContinuationToken continuationToken = null;
+            string queryString = TableQuery.GenerateFilterCondition(nameof(TableEntity.PartitionKey), QueryComparisons.Equal, TagEntry.PartitionTitle);
+            var fluentQuery = new TableQuery<TagEntry>().Where(queryString);
+            var result = await table.ExecuteQuerySegmentedAsync(fluentQuery, continuationToken);
 
-            string name = req.Query["name"];
+            return new OkObjectResult(result.Select(x=>new
+            {
+                Title = x.Title,
+                Id = x.RowKey
+            }));
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
-
-            string responseMessage = string.IsNullOrEmpty(name)
-                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-                : $"Hello, {name}. This HTTP triggered function executed successfully.";
-
-            return new OkObjectResult(responseMessage);
         }
+
+        [FunctionName("getEntries")]
+        public static async Task<IActionResult> GetEntriesFor(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+            [Table("devsketches")] CloudTable table,
+            ILogger log)
+        {
+            var id = req.Query["id"];
+
+            TableContinuationToken continuationToken = null;
+            var partionKeyQuery = TableQuery.GenerateFilterCondition(nameof(ImageEntry.PartitionKey), QueryComparisons.Equal, id);
+                
+            var fluentQuery = new TableQuery<ImageEntry>().Where(partionKeyQuery);
+            var result = await table.ExecuteQuerySegmentedAsync(fluentQuery, continuationToken);
+
+            return new OkObjectResult(result.Select(x => new
+            {
+                Title = x.Title,
+                Description= x.Description,
+                Url = x.Url
+            }));
+
+        }
+    }
+
+
+    public class ImageEntry:TableEntity
+    {
+        public const string PartitionTitle = "Entry";
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string Url { get; set; }
+        public int Tag { get;set; }
+
+    }
+
+    public class TagEntry : TableEntity
+    {
+        public const string PartitionTitle = "Tag";
+        public string Title { get; set; }
     }
 }
