@@ -1,35 +1,23 @@
-const getSketches=(category)=>{
+import axios from "axios";
 
-    const data = [
-        {
-            title:'Singleton',
-            description:'Singleton Pattern',
-            tags:['Design Pattern','Gang Of Four']
-        },
-        {
-            title:'Adapter',
-            description:'Singleton Pattern',
-            tags:['Design Pattern','Gang Of Four']
-        },
-        {
-            title:'Async Await',
-            description:'Async Await',
-            tags:['DotNet']
-        }
-    ];
-
-    const result = data.filter((item)=>item.tags.includes(category));
+const getSketches= async (category)=>{
+    var apiPath = process.env.VUE_APP_API_ENDPOINT + process.env.VUE_APP_API_TAGS;
+    console.log(category);
+    const response = await axios.get(apiPath);
+    console.log(response)
+    const result = response.data;
     return result;
 }
 
 
 
-const getTags = () => {
-    return [
-        'Design Pattern',
-        'Gang Of Four',
-        'DotNet'
-    ]
+const getTags = async () => {
+    var apiPath = process.env.VUE_APP_API_ENDPOINT + process.env.VUE_APP_API_TAGS;
+    
+    const response = await axios.get(apiPath);
+    console.log(response)
+    const result = response.data;
+    return result;
 }
 
 export {getSketches, getTags}
