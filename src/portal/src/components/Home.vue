@@ -5,7 +5,7 @@
         <v-sheet height="150">
           <v-card>
             <v-img max-height="120" v-bind:src="item.url"></v-img>
-            <v-card-subtitle>{{ item.title }}</v-card-subtitle>
+            <v-card-title>{{ item.title }}</v-card-title>
             <v-card-text class="text--disabled">{{
               item.description
             }}</v-card-text>
