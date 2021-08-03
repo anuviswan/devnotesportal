@@ -17,7 +17,6 @@ axios.interceptors.request.use((request)=>{
     "Access-Control-Allow-Credentials": "true"
   }}
    request.headers = header;
-   console.log(request)
   return request;
 });
 
@@ -28,7 +27,6 @@ axios.interceptors.response.use((response)=>{
     error:[]
   }
 },(error)=>{
-  console.log(error);
   switch(error.response.status){
     case 400: return {
       data:null,
